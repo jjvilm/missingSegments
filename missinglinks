@@ -10,38 +10,19 @@ kernel  = np.ones((8,8), np.uint8)
 erosion = cv2.erode(mask,kernel,iterations = 1)
 
 contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-# cv2.drawContours(img, coentours, -1, (0,255,0), 2)
-
-
-
-# cv2.imshow("img", img)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
 
 spacing = 100
 start_x = 111
 start_y = 98
-
+# inverting to iterate from start
 contours = contours[::-1]
-
-# for cnt in contours:
-#     print(cnt)
-#     print(cv2.contourArea(cnt))
-#     cv2.drawContours(img, [cnt], 0, (0,255,0), 3)
-#     cv2.imshow("img", img)
-#     cv2.waitKey(0)
-#     cv2.destroyAllWindows()
- 
-
-# print(contours[0])
-
 
 cols = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 rows = [1, 2, 3, 4, 5, 6, 7]
-missing_segment = dict()
-# check row segments first
+horizontal_seg = dict()
+vertical_seg = dict()
 
-# reference inital coords
+# reference index for coordinates to keep track where we are at 
 ind = 0
 # keep track of coordinates
 x = start_x
@@ -49,30 +30,26 @@ y = start_y
 #  check rows 1-7 first
 for i in range(7):
     #  starting w/ segment A-B
+    # Horizontal lines
     for j in range(6):
 
         if (x,y) in contours[ind]:
             # if on last element of list
             if j == 6:
-                # missing_segment[f"{rows[i]}_{cols[j-1]}{cols[j]}"] = True
-                missing_segment[f"({cols[j-1]}{rows[i]},{cols[j]}{rows[i]})"] = True
+                horizontal_seg[f"({cols[j-1]}{rows[i]},{cols[j]}{rows[i]})"] = True
             else:
-                # missing_segment[f"{rows[i]}_{cols[j]}{cols[j+1]}"] = True
-                missing_segment[f"({cols[j]}{rows[i]},{cols[j+1]}{rows[i]})"] = True
+                horizontal_seg[f"({cols[j]}{rows[i]},{cols[j+1]}{rows[i]})"] = True
             ind += 1
             
         else:
             if j == 6:
-                # missing_segment[f"{rows[i]}_{cols[j-1]}{cols[j]}"] = False
-                missing_segment[f"({cols[j-1]}{rows[i]},{cols[j]}{rows[i]})"] = False
+                horizontal_seg[f"({cols[j-1]}{rows[i]},{cols[j]}{rows[i]})"] = False
             else:
-                # missing_segment[f"{rows[i]}_{cols[j]}{cols[j+1]}"] = False
-                missing_segment[f"({cols[j]}{rows[i]},{cols[j+1]}{rows[i]})"] = False
+                horizontal_seg[f"({cols[j]}{rows[i]},{cols[j+1]}{rows[i]})"] = False
 
         x += spacing
 
-    # iterating through colums, so A-G in current row
-    print("\nGoing to new iteration", ind)
+    # break iteration after this b/ no more to go through
     if ind == 72:
         break
     # inverting coords for vertical segments
@@ -81,22 +58,20 @@ for i in range(7):
         if i == 6:
             i = 5
         
-        # coord matched here
+        # vertical coord found here
         if (x,y) in contours[ind]:
             if k == 6:
-                missing_segment[f"{cols[k]}_{rows[i]}{rows[i+1]}"] = True
+                vertical_seg[f"({cols[k]}{rows[i]},{cols[k]}{rows[i+1]})"] = True
             else:
-                missing_segment[f"{cols[k]}_{rows[i]}{rows[i+1]}"] = True
+                vertical_seg[f"({cols[k]}{rows[i]},{cols[k]}{rows[i+1]})"] = True
             ind += 1
             
         else:
             if k == 6:
-                missing_segment[f"{cols[k]}_{rows[i]}{rows[i+1]}"] = False
+                vertical_seg[f"({cols[k]}{rows[i]},{cols[k]}{rows[i+1]})"] = False
             else:
-                missing_segment[f"{cols[k]}_{rows[i]}{rows[i+1]}"] = False
-            print(ind)
+                vertical_seg[f"({cols[k]}{rows[i]},{cols[k]}{rows[i+1]})"] = False
 
-       
         x += spacing
     # reset x and y
     x = start_x
@@ -104,7 +79,8 @@ for i in range(7):
     # add spacing to Y
     y += spacing
 
-print(missing_segment)
-for k,v in missing_segment.items():
+print("Horizontal points")
+for k,v in horizontal_seg.items():
     if v == False:
         print(k)
+
