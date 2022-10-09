@@ -16,7 +16,7 @@ contours = contours[::-1]
 
 # pixel spacing in between each segment
 spacing = 100
-# starting pixel points for first segment
+# starting pixel points for first horizontal segment
 start_x = 111
 start_y = 98
 
@@ -62,7 +62,8 @@ for i in range(7):
 
         x += spacing
 
-    # break iteration after this b/ no more to go through
+    # break iteration after this b/ no more coordinate to go
+    # through in contours after last horizontal segment is found
     if ind == 72:
         break
     # inverting coords for vertical segments
