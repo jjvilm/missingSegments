@@ -17,8 +17,9 @@ start_y = 98
 # inverting to iterate from start
 contours = contours[::-1]
 
-cols = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 rows = [1, 2, 3, 4, 5, 6, 7]
+all_segs = dict()
 horizontal_seg = dict()
 vertical_seg = dict()
 
@@ -79,8 +80,11 @@ for i in range(7):
     # add spacing to Y
     y += spacing
 
-print("Horizontal points")
+print("Missing horizontal links")
 for k,v in horizontal_seg.items():
     if v == False:
         print(k)
-
+print("Missing Vertical link")
+for k,v in vertical_seg.items():
+    if v == False:
+        print(k)
