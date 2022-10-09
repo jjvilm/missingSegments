@@ -17,8 +17,7 @@ contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 # cv2.imshow("img", img)
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
-segment_width = 79
-segment_gap = 21
+
 spacing = 100
 start_x = 111
 start_y = 98
@@ -44,27 +43,31 @@ missing_segment = dict()
 
 # reference inital coords
 ind = 0
-
+# keep track of coordinates
 x = start_x
 y = start_y
-#  check rows 1-7 first, starting w/ segment A-B
+#  check rows 1-7 first
 for i in range(7):
-
+    #  starting w/ segment A-B
     for j in range(6):
 
         if (x,y) in contours[ind]:
             # if on last element of list
             if j == 6:
-                missing_segment[f"{rows[i]}_{cols[j-1]}{cols[j]}"] = True
+                # missing_segment[f"{rows[i]}_{cols[j-1]}{cols[j]}"] = True
+                missing_segment[f"({cols[j-1]}{rows[i]},{cols[j]}{rows[i]})"] = True
             else:
-                missing_segment[f"{rows[i]}_{cols[j]}{cols[j+1]}"] = True
+                # missing_segment[f"{rows[i]}_{cols[j]}{cols[j+1]}"] = True
+                missing_segment[f"({cols[j]}{rows[i]},{cols[j+1]}{rows[i]})"] = True
             ind += 1
             
         else:
             if j == 6:
-                missing_segment[f"{rows[i]}_{cols[j-1]}{cols[j]}"] = False
+                # missing_segment[f"{rows[i]}_{cols[j-1]}{cols[j]}"] = False
+                missing_segment[f"({cols[j-1]}{rows[i]},{cols[j]}{rows[i]})"] = False
             else:
-                missing_segment[f"{rows[i]}_{cols[j]}{cols[j+1]}"] = False
+                # missing_segment[f"{rows[i]}_{cols[j]}{cols[j+1]}"] = False
+                missing_segment[f"({cols[j]}{rows[i]},{cols[j+1]}{rows[i]})"] = False
 
         x += spacing
 
